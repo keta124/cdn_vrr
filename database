@@ -1,0 +1,17 @@
+database
+
+1. id
+2. state_id [[int
+3. network   [CIDR]
+4. datacenter [varchar(50)]
+5. weight [int]
+
+
+
+
+
+
+- state_id ++1 when occur change
+- network ( not conflict )
+- datacenter (vdc-01, fpt-01, vt-01, vt-02)
+- weight
