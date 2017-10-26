@@ -79,10 +79,12 @@ class Vega_routing(object):
                                         'datacenter':table_.replace('dc_','')},result))
             rows_dc = rows_dc+result_
         # map dict with key network
-        rows_dc_ = dict(map(lambda x:(x['network'],x),rows_dc ))
-        print rows_dc_
+        #rows_dc_ = dict(map(lambda x:(x['network'],x),rows_dc ))
+        #print rows_dc_
         # Phase 2: Modify route
         # OK
+        rows_dc_new = list(map(Map_route().map_new_route,rows_dc)
+		rows_dc_ = dict(map(lambda x:(x['network'],x),rows_dc_new ))
         # vt1 => vt2 =>fpt =>vdc
         # Phase 2 :load current state 
         rows_state =self.load_eable_state()
