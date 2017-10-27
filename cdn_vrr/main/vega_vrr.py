@@ -63,18 +63,6 @@ class Vega_routing(object):
                                     },result_es_))
             cdn_vrr_dc.update_state_column(table_,'')
             cdn_vrr_dc.insert_table_dc(table_,rows)
-    '''
-    def update_table_state(self,table,row):
-        query = "SELECT COUNT(network) FROM " +table+" WHERE \
-                (network ='%(network)s' AND datacenter ='%(datacenter)s')" %row
-        if self.psql.query_db(query)[0][0] !=0:
-            self.psql_.update_network_column(table,row)
-            print 'update'
-        else:
-            condition = "WHERE network ='%(network)s'"%row
-            self.psql_.update_state_column(table,condition)
-            self.psql_.insert_state_vrr(table,[row])
-    '''
     def merge_table_state(self):
         #phase 1 load new state
         rows_dc=[]

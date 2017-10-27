@@ -49,11 +49,11 @@ def load_first_time():
   load_file = load_file_origin()
   rows =list(map(lambda x: {
                           'network':x[0],
-                          'customer_isp':x[1],
+                          'customer_isp':'VEGA',
                           'weight':0,
                           'state':'True',
                           'timestamp':timenow,
-                          'datacenter':'VEGA'},load_file))
+                          'datacenter':x[1]},load_file))
   psg = Query_cdn_vrr(PSQL_CONFIG[0],PSQL_CONFIG[1],PSQL_CONFIG[2],PSQL_CONFIG[3])
   psg.update_state_table(table)
   psg.insert_state_vrr(table,rows)

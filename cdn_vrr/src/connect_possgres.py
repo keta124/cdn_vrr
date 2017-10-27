@@ -47,25 +47,3 @@ class Query_cdn_vrr(Possgres_sql):
     conn.commit()
     conn.close()
 
-  def update_network_column(self,table,row):
-    conn=self.connect_db()
-    cur = conn.cursor()
-    query ="UPDATE "+ table +" SET\
-              network ='%(network)s',\
-              datacenter ='%(datacenter)s',\
-              weight = %(weight)s,\
-              state = '%(state)s',\
-              timestamp = '%(timestamp)s',\
-              customer_isp = '%(customer_isp)s' \
-            WHERE \
-              (network ='%(network)s' AND\
-              datacenter ='%(datacenter)s' )"%row
-    print query
-    cur.execute(query)
-    conn.commit()
-    conn.close()
-
-'''
-if __name__ == '__main__':
-  load_first_time()
-'''
