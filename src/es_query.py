@@ -29,7 +29,7 @@ class Es_query(object):
 			      "filter": {
 			        "range": {
 			          "timecheck": {
-			            "gte": "now-30m",
+			          	"gte": "now-30m"
 			          }
 			        }
 			      }
@@ -102,36 +102,39 @@ class Es_query(object):
 		except:
 			print 'EXCEPT ES DEST QUERY'
 			return []
+
+	def map_datacenter(self,dc):
+		if 'vdc1' in dc:
+			return 'vdc01'
+		elif 'vt1' in dc:
+			return 'vt01'
+		elif 'vt2' in dc:
+			return 'vt02'
+		elif 'fpt1' in dc:
+			return 'fpt01'
+		else:
+			return dc		
 	def parse_network(self):
-		query="(percent_low:>40) OR (percent_low:>30 AND percent_mid:>50) OR (percent_low:>20 AND percent_mid:>70) OR (percent_low:>10 AND percent_mid:>90) OR (percent_mid:>99)"
+		query="*"
 		response = self.query_subnet(query)
-		parsre_result =[]
-		for i in response:
-			parsre_dict ={}
-			parsre_dict["total"] = int(i["1"]["value"])
-			parsre_dict["network"] = i["key"]
+		parsre_es =[]
+		for i in response :
 			try:
-				parsre_dict["datacenter"] = i["datacenter"]["buckets"][0]["key"]
-			except:
-				parsre_dict["datacenter"]=""
-			try:
-				parsre_dict["customer_isp"] = i["datacenter"]["buckets"][0]["isp_client"]["buckets"][0]["key"]
-			except:
-				parsre_dict["customer_isp"]=""
-			try:
-				percent_low = i["datacenter"]["buckets"][0]["isp_client"]["buckets"][0]["percent_low"]["value"]
-			except:
-				percent_low = 0
-			try:	
-				percent_mid = i["datacenter"]["buckets"][0]["isp_client"]["buckets"][0]["percent_mid"]["value"]
-			except:
-				percent_mid=0
-			weight = int((percent_low*2+percent_mid)/3)
-			parsre_dict["weight"]=weight
-			parsre_result.append(parsre_dict)
-		return parsre_result
-'''
-if __name__ == '__main__':
-	es =Es_query()
-	print es.parse_network()
-'''
+				parsre_dict ={}
+				parsre_dict["network"] = i["key"]
+				min_weight_stt =100
+				for j in range (0,len(i["datacenter"]["buckets"])):
+					percent_low = i["datacenter"]["buckets"][j]["isp_client"]["buckets"][0]["percent_low"]["value"]
+					percent_mid = i["datacenter"]["buckets"][j]["isp_client"]["buckets"][0]["percent_mid"]["value"]
+					weight = int((percent_low*2+percent_mid)/3)
+					if weight < min_weight_stt:
+						min_weight_stt = weight
+						parsre_dict["customer_isp"] = i["datacenter"]["buckets"][j]["isp_client"]["buckets"][0]["key"]
+						parsre_dict['datacenter'] = self.map_datacenter(i["datacenter"]["buckets"][j]["key"])
+						parsre_dict["weight"]=weight
+						parsre_dict["total"]=i["datacenter"]["buckets"][j]['1']['value']
+				parsre_es.append(parsre_dict)
+			except :
+				print 'EXCEPT ES RESULT'
+				return []
+		return parsre_es

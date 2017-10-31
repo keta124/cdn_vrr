@@ -21,21 +21,20 @@ class Query_cdn_vrr(Possgres_sql):
   def __init__ (self,dbname,user,host,password):
     Possgres_sql.__init__(self,dbname,user,host,password)
 
+  def insert_vrr_log (self,table,row):
+    conn=self.connect_db()
+    cur = conn.cursor()
+    query = "INSERT INTO " +table+" VALUES (%(network)s,%(datacenter)s,%(timestamp)s)"
+    cur.execute(query,row)
+    conn.commit()
+    conn.close()
+
   def insert_state_vrr(self,table,rows):
     conn=self.connect_db()
     cur = conn.cursor()
     query = "INSERT INTO " +table+" VALUES (%(network)s,%(datacenter)s,%(weight)s,%(state)s,%(timestamp)s,%(customer_isp)s)"
     for row in rows :
       cur.execute(query,row)
-    conn.commit()
-    conn.close()
-
-  def insert_table_dc(self,table,rows):
-    conn=self.connect_db()
-    cur = conn.cursor()
-    query = "INSERT INTO " +table+" VALUES (%(id)s,%(timestamp)s,%(network)s,%(weight)s,%(state)s,%(customer_isp)s)"
-    for row in rows :
-      cur.execute(query, row)
     conn.commit()
     conn.close()
 
@@ -47,25 +46,3 @@ class Query_cdn_vrr(Possgres_sql):
     conn.commit()
     conn.close()
 
-  def update_network_column(self,table,row):
-    conn=self.connect_db()
-    cur = conn.cursor()
-    query ="UPDATE "+ table +" SET\
-              network ='%(network)s',\
-              datacenter ='%(datacenter)s',\
-              weight = %(weight)s,\
-              state = '%(state)s',\
-              timestamp = '%(timestamp)s',\
-              customer_isp = '%(customer_isp)s' \
-            WHERE \
-              (network ='%(network)s' AND\
-              datacenter ='%(datacenter)s' )"%row
-    print query
-    cur.execute(query)
-    conn.commit()
-    conn.close()
-
-'''
-if __name__ == '__main__':
-  load_first_time()
-'''

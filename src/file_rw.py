@@ -17,4 +17,3 @@ class File_RW(object):
       f.close()
     except:
         print "__Except write file__"
-
