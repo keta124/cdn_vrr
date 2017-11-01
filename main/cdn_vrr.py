@@ -72,4 +72,6 @@ if __name__ == '__main__':
     vrr.merge_table_state()
     list_write = vrr.recomment_vrr('vrr_info')
     list_write_map = list(map(lambda x: ''+str(x[0])+' => '+str(x[1]),list_write))
-    File_RW('vrr_info',list_write_map).writefile()
+    list_write_map_mode = list(map(lambda x: ''+str(x[0])+','+str(x[1]).replace('01','-01').replace('02','-02'),list_write))
+    File_RW('vrr_info_origin.txt',list_write_map).writefile()
+    File_RW('vrr_info.txt',list_write_map_mode).writefile()
