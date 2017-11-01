@@ -62,7 +62,7 @@ class Routing(object):
                 self.psql.insert_vrr_log('vrr_log',row)
                 return self.map_new_default(row)
             else: 
-                row['datacenter'] = optimus_route(network)
+                row['datacenter'] = self.optimus_route(network)
                 return row
         else :
             row['weight'] =0
